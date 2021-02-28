@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>MyBase</id>
+    <version>0.0.1</version>
+    <title>MyBase</title>
+    <authors>Kazuki Awasawa</authors>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/kawasawa/MyBase</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>.NET Core によるアプリケーションの開発をサポートするためのライブラリです。</summary>
+    <description>MyBase は .NET Core によるアプリケーションの開発をサポートするためのライブラリです。Prism の標準機能を拡張するための少数のクラスから構成されています。</description>
+    <copyright>(C) Kazuki Awasawa All Rights Reserved.</copyright>
+    <language>ja-JP</language>
+    <tags>netcore mvvm prism</tags>
+    <icon>images\icon.png</icon>
+    <dependencies>
+      <group targetFramework="netcoreapp3.1">
+        <dependency id="Microsoft-WindowsAPICodePack-Shell" version="1.1.4" />
+        <dependency id="Prism.Wpf"                          version="8.0.0.1909" />
+        <dependency id="System.Interactive"                 version="5.0.0" />
+        <dependency id="System.Reactive"                    version="5.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\.images\icon.png" target="images" />
+    <file src="..\MyBase\bin\Release\netcoreapp3.1\MyBase.dll" target="lib\netcoreapp3.1" />
+    <file src="..\MyBase\bin\Release\netcoreapp3.1\MyBase.xml" target="lib\netcoreapp3.1" />
+  </files>
+</package>
