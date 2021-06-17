@@ -39,13 +39,11 @@ namespace MyBase.Wpf.CommonDialogs
                 {
                     static CommonFileDialog createDialog(FileDialogParametersBase parameters)
                     {
-                        static void populateFilePickerDialogParameters<T>(T dialog, FilePickerDialogParametersBase parameters)
+                        static void createDialogFilter<T>(T dialog, FilePickerDialogParametersBase parameters)
                             where T : CommonFileDialog
                         {
                             const char FILTER_SEPARATOR = '|';
                             const char EXTENSION_PREFIX = '.';
-
-                            dialog.DefaultFileName = parameters.DefaultFileName;
 
                             var filters = parameters.Filter?.Split(FILTER_SEPARATOR) ?? Array.Empty<string>();
                             if (filters.Length % 2 != 0)
@@ -66,6 +64,7 @@ namespace MyBase.Wpf.CommonDialogs
                                 var dialog = new CommonOpenFileDialog();
                                 dialog.Title = f.Title;
                                 dialog.InitialDirectory = f.InitialDirectory;
+                                dialog.DefaultFileName = f.DefaultFileName;
                                 dialog.IsFolderPicker = true;
                                 return dialog;
                             }
@@ -74,8 +73,9 @@ namespace MyBase.Wpf.CommonDialogs
                                 var dialog = new CommonOpenFileDialog();
                                 dialog.Title = o.Title;
                                 dialog.InitialDirectory = o.InitialDirectory;
+                                dialog.DefaultFileName = o.DefaultFileName;
                                 dialog.Multiselect = o.Multiselect;
-                                populateFilePickerDialogParameters(dialog, o);
+                                createDialogFilter(dialog, o);
                                 return dialog;
                             }
                             case SaveFileDialogParameters s:
@@ -83,7 +83,8 @@ namespace MyBase.Wpf.CommonDialogs
                                 var dialog = new CommonSaveFileDialog();
                                 dialog.Title = s.Title;
                                 dialog.InitialDirectory = s.InitialDirectory;
-                                populateFilePickerDialogParameters(dialog, s);
+                                dialog.DefaultFileName = s.DefaultFileName;
+                                createDialogFilter(dialog, s);
                                 return dialog;
                             }
                             default:
