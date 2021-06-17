@@ -5,7 +5,7 @@
     <UseWPF>true</UseWPF>
     <Authors>Kazuki Awasawa</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <PackageProjectUrl>https://github.com/kawasawa/MyBase.Wpf</PackageProjectUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Kazuki Awasawa All Rights Reserved.</Copyright>
