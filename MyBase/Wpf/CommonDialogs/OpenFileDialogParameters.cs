@@ -8,7 +8,7 @@ namespace MyBase.Wpf.CommonDialogs
     public class OpenFileDialogParameters : FilePickerDialogParametersBase
     {
         /// <summary>
-        /// 選択された複数のファイルの完全パスを取得または設定します。
+        /// 選択されたすべてのファイルの完全パスを取得または設定します。
         /// </summary>
         public IEnumerable<string> FileNames { get; set; }
 

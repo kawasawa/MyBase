@@ -16,7 +16,7 @@
         public string InitialDirectory { get; set; }
 
         /// <summary>
-        /// 既定のファイルの完全パスを取得または設定します。
+        /// 既定のファイル名を取得または設定します。
         /// </summary>
         public string DefaultFileName { get; set; }
 
