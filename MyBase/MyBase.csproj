@@ -10,6 +10,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>© Kazuki Awasawa All Rights Reserved.</Copyright>
     <ApplicationIcon></ApplicationIcon>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -14,7 +14,7 @@ namespace MyBase.Logging
         private const int SHRINK_THRESHOLD = 64;
         private const int DEFAULT_CAPACITY = 16;
 
-        private readonly object _lockToken = new object();
+        private readonly object _lockToken = new();
         private List<ILoggerFacade> _loggers;
         private int _count;
 

@@ -33,7 +33,7 @@ namespace MyBase.Logging
         public LogEventArgs()
         {
         }
-        
+
         /// <summary>
         /// このクラスの新しいインスタンスを生成します。
         /// </summary>
