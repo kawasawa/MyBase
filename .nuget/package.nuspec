@@ -15,7 +15,20 @@
     <tags>netcore mvvm prism</tags>
     <icon>images\icon.png</icon>
     <dependencies>
+      <group targetFramework="net48">
+        <dependency id="Microsoft-WindowsAPICodePack-Shell" version="1.1.4" />
+        <dependency id="Prism.Wpf"                          version="8.1.97" />
+        <dependency id="System.ComponentModel.Annotations"  version="5.0.0" />
+        <dependency id="System.Interactive"                 version="5.0.0" />
+        <dependency id="System.Reactive"                    version="5.0.0" />
+      </group>
       <group targetFramework="netcoreapp3.1">
+        <dependency id="Microsoft-WindowsAPICodePack-Shell" version="1.1.4" />
+        <dependency id="Prism.Wpf"                          version="8.1.97" />
+        <dependency id="System.Interactive"                 version="5.0.0" />
+        <dependency id="System.Reactive"                    version="5.0.0" />
+      </group>
+      <group targetFramework="net5.0-windows7.0">
         <dependency id="Microsoft-WindowsAPICodePack-Shell" version="1.1.4" />
         <dependency id="Prism.Wpf"                          version="8.1.97" />
         <dependency id="System.Interactive"                 version="5.0.0" />
@@ -25,7 +38,11 @@
   </metadata>
   <files>
     <file src="..\.images\icon.png" target="images" />
-    <file src="..\MyBase\bin\Release\netcoreapp3.1\MyBase.dll" target="lib\netcoreapp3.1" />
-    <file src="..\MyBase\bin\Release\netcoreapp3.1\MyBase.xml" target="lib\netcoreapp3.1" />
+    <file src="..\MyBase\bin\Release\net48\MyBase.dll"             target="lib\net48\" />
+    <file src="..\MyBase\bin\Release\net48\MyBase.xml"             target="lib\net48\" />
+    <file src="..\MyBase\bin\Release\netcoreapp3.1\MyBase.dll"     target="lib\netcoreapp3.1\" />
+    <file src="..\MyBase\bin\Release\netcoreapp3.1\MyBase.xml"     target="lib\netcoreapp3.1\" />
+    <file src="..\MyBase\bin\Release\net5.0-windows7.0\MyBase.dll" target="lib\net5.0-windows7.0\" />
+    <file src="..\MyBase\bin\Release\net5.0-windows7.0\MyBase.xml" target="lib\net5.0-windows7.0\" />
   </files>
 </package>

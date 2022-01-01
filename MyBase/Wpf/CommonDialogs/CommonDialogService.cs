@@ -52,8 +52,8 @@ namespace MyBase.Wpf.CommonDialogs
                                     dialog.Filters.Add(filter);
 
                                 dialog.DefaultExtension =
-                                    parameters.DefaultExtension?.StartsWith(EXTENSION_PREFIX) == true ?
-                                    parameters.DefaultExtension[1..] :
+                                    parameters.DefaultExtension?.StartsWith(EXTENSION_PREFIX.ToString()) == true ?
+                                    parameters.DefaultExtension.Substring(1) :
                                     parameters.DefaultExtension;
                             }
 
