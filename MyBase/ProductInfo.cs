@@ -130,5 +130,26 @@ namespace MyBase
         {
             this._specifiedAssembly = specifiedAssembly;
         }
+
+        /// <summary>
+        /// 現在のオブジェクトを表す文字列を返します。
+        /// </summary>
+        /// <returns>現在のオブジェクトを表す文字列</returns>
+        public override string ToString()
+        {
+            return string.Join(", ", this
+                .GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(p => p.CanRead)
+                .Select(p =>
+                {
+                    var value = p.GetValue(this, null);
+                    return value switch
+                    {
+                        IEnumerable<object> array => $"{p.Name}: [{string.Join(", ", array.Select((o, i) => $"[{i}]: {o}"))}]",
+                        _ => $"{p.Name}: {value}",
+                    };
+                }));
+        }
     }
 }
