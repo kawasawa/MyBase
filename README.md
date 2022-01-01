@@ -1,18 +1,18 @@
 # MyBase
 
-<div>
-  <a href="https://www.nuget.org/packages/MyBase">
-      <img src="https://img.shields.io/nuget/v/MyBase.svg?style=flat-square">
-  </a>
-  <a href="https://github.com/kawasawa/MyBase/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/kawasawa/MyBase.svg?style=flat-square">
-  </a>
-</div>
+[NuGet](https://www.nuget.org/packages/MyBase)  
+[GitHib](https://github.com/kawasawa/MyBase)  
 
 ## 概要
 
-MyBase は .NET Core によるアプリケーションの開発をサポートするためのライブラリです。  
+MyBase は .NET Framework, .NET Core による WPF アプリケーションの開発をサポートするためのライブラリです。  
 Prism の標準機能を拡張するための少数のクラスから構成されています。  
+
+| 対象のフレームワーク | バージョンの下限値 |
+|----------------------|--------------------|
+| .NET Framework       | 4.8                |
+| .NET Core            | 3.1                |
+| .NET                 | 5.0                |
 
 ## 使用例
 
@@ -194,16 +194,19 @@ namespace TestApp
 |-------------------------------|--------------------------------|
 | SaveFileDialogParameters      | 保存先となるファイルパスの指定 |
 | OpenFileDialogParameters      | 読込元となるファイルパスの指定 |
-| FolderBrowserDialogParameters | フォルダーパスの指定　　　　　 |
-| PrintDialogParameters         | フロードキュメントの印刷　　　 |
+| FolderBrowserDialogParameters | フォルダーパスの指定           |
+| PrintDialogParameters         | フロードキュメントの印刷       |
 
-これを使い ViewModel を起点に OpenFileDialog を表示する場合は以下のようになります。  
+これらを使い ViewModel を起点に OpenFileDialog を表示する場合は以下のようになります。  
 
 ```cs
 using MyBase.Wpf;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    /// <summary>
+    /// ファイルを選択するダイアログを表示します。
+    /// </summary>
     public void ShowOpenFileDialog()
     {
         var parameters = new OpenFileDialogParameters()
@@ -221,7 +224,7 @@ public class MainWindowViewModel : ViewModelBase
 }
 ```
 
-さらにダイアログが表示される前、閉じられた後に実行されるコールバックメソッドを引数で指定することができます。以下は、OpenFileDialog に文字コードの選択欄を追加し、ユーザが選択した文字コードを取得する例です。ダイアログの装飾には Windows API CodePack を使用しています。  
+単純な表示だけなく、ダイアログを表示する前、閉じられた後に呼び出されるコールバックメソッドを引数で指定することもできます。以下は、OpenFileDialog に文字コードの選択欄を追加し、ユーザによって選択された文字コードを取得する例です。ダイアログの装飾には Windows API CodePack を使用しています。  
 
 ```cs
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -232,6 +235,9 @@ using System.Text;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    /// <summary>
+    /// ファイルを選択するダイアログを表示します。
+    /// </summary>
     public void ShowOpenFileDialog()
     {
         IEnumerable<string> fileNames = null;
@@ -245,15 +251,19 @@ public class MainWindowViewModel : ViewModelBase
                 DefaultExtension = ".txt",
                 Multiselect = true,
             },
+
+            // ダイアログを表示する前に呼び出されるコールバックメソッド
             (dialog, parameters) =>
             {
                 // 文字コードの選択欄を追加する
                 var d = (CommonFileDialog)dialog;
-                var encodingComboBox = this.CreateComboBox(Encoding.UTF8);
+                var encodingComboBox = this.CreateEncodingComboBox(Encoding.UTF8);
                 var encodingGroupBox = new CommonFileDialogGroupBox($"文字コード(&E):");
                 encodingGroupBox.Items.Add(encodingComboBox);
                 d.Controls.Add(encodingGroupBox);
             },
+
+            // ダイアログが閉じられた後に呼び出されるコールバックメソッド
             (dialog, parameters, result) =>
             {
                 if (result == false)
@@ -269,27 +279,33 @@ public class MainWindowViewModel : ViewModelBase
                 var encodingComboBox = (CommonFileDialogComboBox)encodingGroupBox.Items.First();
                 encoding = ((EncodingComboBoxItem)encodingComboBox.Items[encodingComboBox.SelectedIndex]).Encoding;
             });
+
         var result = this.CommonDialogService.ShowDialog(parameters);
         if (!result)
             return;
     }
 
-    private CommonFileDialogComboBox CreateComboBox(Encoding defaultEncoding)
+    /// <summary>
+    /// 文字コード選択用のコンボボックスを構築します。
+    /// </summary>
+    /// <param name="defaultEncoding">既定の文字コード</param>
+    /// <returns>文字コード選択用のコンボボックス</returns>
+    public static CommonFileDialogComboBox CreateEncodingComboBox(Encoding defaultEncoding)
     {
         var comboBox = new CommonFileDialogComboBox();
-        var encodings = Encoding.GetEncodings()
-            .Select(info => Encoding.GetEncoding(info.Name))
-            .OrderBy(e => e.CodePage)
-            .ToList();
-        for (var i = 0; i < encodings.Count; i++)
+        var encodings = Constants.ENCODINGS;
+        for (var i = 0; i < encodings.Count(); i++)
         {
-            comboBox.Items.Add(new EncodingComboBoxItem(encodings[i]));
-            if (encodings[i] == defaultEncoding)
+            comboBox.Items.Add(new EncodingComboBoxItem(encodings.ElementAt(i)));
+            if (encodings.ElementAt(i) == defaultEncoding)
                 comboBox.SelectedIndex = i;
         }
         return comboBox;
     }
 
+    /// <summary>
+    /// 文字コードを格納するコンボボックスアイテムを表します。
+    /// </summary>
     private class EncodingComboBoxItem : CommonFileDialogComboBoxItem
     {
         public Encoding Encoding { get; }

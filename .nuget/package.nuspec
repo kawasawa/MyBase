@@ -5,15 +5,17 @@
     <version>0.0.2</version>
     <title>MyBase</title>
     <authors>Kazuki Awasawa</authors>
-    <license type="expression">MIT</license>
-    <projectUrl>https://github.com/kawasawa/MyBase</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <summary>.NET Core によるアプリケーションの開発をサポートするためのライブラリです。</summary>
-    <description>MyBase は .NET Core によるアプリケーションの開発をサポートするためのライブラリです。Prism の標準機能を拡張するための少数のクラスから構成されています。</description>
     <copyright>(C) Kazuki Awasawa All Rights Reserved.</copyright>
+    <summary>.NET Framework, .NET Core による WPF アプリケーションの開発をサポートするためのライブラリです。</summary>
+    <description>MyBase は .NET Framework, .NET Core による WPF アプリケーションの開発をサポートするためのライブラリです。Prism の標準機能を拡張するための少数のクラスから構成されています。</description>
+    <projectUrl>https://github.com/kawasawa/MyBase</projectUrl>
+    <repository url="https://github.com/kawasawa/MyBase" type="git" />
+    <license type="expression">MIT</license>
     <language>ja-JP</language>
-    <tags>netcore mvvm prism</tags>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>prism mvvm wpf</tags>
     <icon>images\icon.png</icon>
+    <readme>docs\README.md</readme>
     <dependencies>
       <group targetFramework="net48">
         <dependency id="Microsoft-WindowsAPICodePack-Shell" version="1.1.4" />
@@ -37,7 +39,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\.images\icon.png" target="images" />
+    <file src="..\.images\icon.png"                                target="images\" />
+    <file src="..\README.md"                                       target="docs\" />
     <file src="..\MyBase\bin\Release\net48\MyBase.dll"             target="lib\net48\" />
     <file src="..\MyBase\bin\Release\net48\MyBase.xml"             target="lib\net48\" />
     <file src="..\MyBase\bin\Release\netcoreapp3.1\MyBase.dll"     target="lib\netcoreapp3.1\" />
