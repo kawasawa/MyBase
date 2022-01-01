@@ -2,8 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>MyBase</id>
-    <version>0.0.2</version>
     <title>MyBase</title>
+    <version>1.0.0</version>
     <authors>Kazuki Awasawa</authors>
     <copyright>(C) Kazuki Awasawa All Rights Reserved.</copyright>
     <summary>.NET Framework, .NET Core による WPF アプリケーションの開発をサポートするためのライブラリです。</summary>
