@@ -7,7 +7,7 @@
     <authors>Kazuki Awasawa</authors>
     <copyright>(C) Kazuki Awasawa All Rights Reserved.</copyright>
     <summary>.NET Framework, .NET Core による WPF アプリケーションの開発をサポートするためのライブラリです。</summary>
-    <description>MyBase は .NET Framework, .NET Core による WPF アプリケーションの開発をサポートするためのライブラリです。Prism の標準機能を拡張するための少数のクラスから構成されています。</description>
+    <description>MyBase は .NET Framework, .NET Core による WPF アプリケーションの開発をサポートするためのライブラリです。Prism との連携を意識した処理や標準機能を拡張する処理のほか、最新の Prism では廃止されてしまった実装の一部が移植されています。</description>
     <projectUrl>https://github.com/kawasawa/MyBase</projectUrl>
     <repository url="https://github.com/kawasawa/MyBase" type="git" />
     <license type="expression">MIT</license>
@@ -19,6 +19,7 @@
     <dependencies>
       <group targetFramework="net48">
         <dependency id="Microsoft-WindowsAPICodePack-Shell" version="1.1.4" />
+        <dependency id="Microsoft.Xaml.Behaviors.Wpf"       version="1.1.31" />
         <dependency id="Prism.Wpf"                          version="8.1.97" />
         <dependency id="System.ComponentModel.Annotations"  version="5.0.0" />
         <dependency id="System.Interactive"                 version="5.0.0" />
@@ -26,12 +27,14 @@
       </group>
       <group targetFramework="netcoreapp3.1">
         <dependency id="Microsoft-WindowsAPICodePack-Shell" version="1.1.4" />
+        <dependency id="Microsoft.Xaml.Behaviors.Wpf"       version="1.1.31" />
         <dependency id="Prism.Wpf"                          version="8.1.97" />
         <dependency id="System.Interactive"                 version="5.0.0" />
         <dependency id="System.Reactive"                    version="5.0.0" />
       </group>
       <group targetFramework="net5.0-windows7.0">
         <dependency id="Microsoft-WindowsAPICodePack-Shell" version="1.1.4" />
+        <dependency id="Microsoft.Xaml.Behaviors.Wpf"       version="1.1.31" />
         <dependency id="Prism.Wpf"                          version="8.1.97" />
         <dependency id="System.Interactive"                 version="5.0.0" />
         <dependency id="System.Reactive"                    version="5.0.0" />

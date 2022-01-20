@@ -1,15 +1,15 @@
 # MyBase
 
 [NuGet](https://www.nuget.org/packages/MyBase)  
-[GitHib](https://github.com/kawasawa/MyBase)  
+[GitHib](https://github.com/kawasawa/MyBase)
 
 ## 概要
 
 MyBase は .NET Framework, .NET Core による WPF アプリケーションの開発をサポートするためのライブラリです。  
-Prism の標準機能を拡張するための少数のクラスから構成されています。  
+Prism との連携を意識した処理や標準機能を拡張する処理のほか、最新の Prism では廃止されてしまった実装の一部が移植されています。
 
 | 対象のフレームワーク | バージョンの下限値 |
-|----------------------|--------------------|
+| -------------------- | ------------------ |
 | .NET Framework       | 4.8                |
 | .NET Core            | 3.1                |
 | .NET                 | 5.0                |
@@ -18,7 +18,7 @@ Prism の標準機能を拡張するための少数のクラスから構成さ�
 
 ### ProductInfo - プロダクト情報
 
-ProductInfo クラスを利用することでエントリーポイントとなる実行ファイルのプロダクト情報を取得することができます。このクラスは IProductInfo インターフェースを実装しており、他のサービスと同様にシングルトンとして DI コンテナに登録しておくと良いでしょう。  
+ProductInfo クラスを利用することでエントリーポイントとなる実行ファイルのプロダクト情報を取得することができます。このクラスは IProductInfo インターフェースを実装しており、他のサービスと同様にシングルトンとして DI コンテナに登録しておくと良いでしょう。
 
 ```cs
 using MyBase;
@@ -38,7 +38,7 @@ namespace TestApp
 }
 ```
 
-ViewModel 層では DI フレームワークからインスタンスを注入し、View 層でこれをバインドします。  
+ViewModel 層では DI フレームワークからインスタンスを注入し、View 層でこれをバインドします。
 
 ```cs
 using MyBase;
@@ -66,7 +66,7 @@ namespace TestApp.ViewModels
 </Window>
 ```
 
-ProductInfo クラスは内部で遅延初期化される Assembly を保持しており、これをもとにプロダクト情報を取得しています。この Assembly の既定値は Assembly.GetEntryAssembly() と等価ですが、インスタンスの生成時にこの値を変更することもできます。  
+ProductInfo クラスは内部で遅延初期化される Assembly を保持しており、これをもとにプロダクト情報を取得しています。この Assembly の既定値は Assembly.GetEntryAssembly() と等価ですが、インスタンスの生成時にこの値を変更することもできます。
 
 ```cs
     new ProductInfo(Assembly.GetExecutingAssembly());
@@ -74,7 +74,7 @@ ProductInfo クラスは内部で遅延初期化される Assembly を保持し�
 
 ### ValidatableBase - 変更通知オブジェクト
 
-Prism が提供する変更通知処理が搭載された BindableBase クラスを継承し、IDisposable, INotifyDataErrorInfo を実装した ValidatableBase があります。このクラスから派生し Model 層、ViewModel 層を実装することができます。  
+Prism が提供する変更通知処理が搭載された BindableBase クラスを継承し、IDisposable, INotifyDataErrorInfo を実装した ValidatableBase があります。このクラスから派生し Model 層、ViewModel 層を実装することができます。
 
 ```cs
 using MyBase;
@@ -126,7 +126,7 @@ namespace TestApp.ViewModels
 }
 ```
 
-また、リソースを一括で開放できる System.Reactive の CompositeDisposable がプロパティとして定義されています。ReactiveProperty 等を利用する際、定義されたプロパティの開放に使います。  
+また、リソースを一括で開放できる System.Reactive の CompositeDisposable がプロパティとして定義されています。ReactiveProperty 等を利用する際、定義されたプロパティの開放に使います。
 
 ```cs
 using Reactive.Bindings;
@@ -151,7 +151,7 @@ namespace TestApp.ViewModels
 ### ILoggerFacade - ロガーファサード
 
 Prism 8.0 で廃止された ILoggerFacade インターフェース、Category, Priority を模した列挙値を提供します。  
-いくつかのロガーも移植されており、これらによって Prism のかつてのロギングと同等の実装が可能になります。  
+いくつかのロガーも移植されており、これらによって Prism のかつてのロギングと同等の実装が可能になります。
 
 ```cs
     this.Logger = new DebugLogger();
@@ -160,7 +160,7 @@ Prism 8.0 で廃止された ILoggerFacade インターフェース、Category, 
 
 ### CompositeLogger - 複合ロガー
 
-CompositeLogger は他のロガーを複数内包できるコンテナです。このクラス自身も ILoggerFacade を実装しており、実行される Log メソッドは内包されたすべてのロガーに伝播します。また同インターフェースにより DI コンテナへの登録も可能です。  
+CompositeLogger は他のロガーを複数内包できるコンテナです。このクラス自身も ILoggerFacade を実装しており、実行される Log メソッドは内包されたすべてのロガーに伝播します。また同インターフェースにより DI コンテナへの登録も可能です。
 
 ```cs
     this.Logger = new CompositeLogger(new DebugLogger(), new TraceLogger());
@@ -188,138 +188,222 @@ namespace TestApp
 ### CommonDialogService - コモンダイアログの表示
 
 以前の Prism では InteractionRequest とそれに対応する Trigger による相互作用でダイアログを表示する方法が一般的でした。これが Prism 7.2 以降のバージョンでは新たに IDialogService インターフェースが追加され、こちらを使用する方法が推奨されるようになりました。  
-この方式を踏襲し、本ライブラリではコモンダイアログの表示に特化した ICommonDialogService を提供しています。処理で授受される ICommonDialogParameters インターフェースを実装したいくつかのクラスが定義されています。現状では以下の機能が実装されています。  
+この方式を踏襲し、本ライブラリではコモンダイアログの表示に特化した ICommonDialogService を提供しています。処理で授受される ICommonDialogParameters インターフェースを実装したいくつかのクラスが定義されています。現状では以下の機能が実装されています。
 
 | パラメータ                    | 主な機能                       |
-|-------------------------------|--------------------------------|
+| ----------------------------- | ------------------------------ |
 | SaveFileDialogParameters      | 保存先となるファイルパスの指定 |
 | OpenFileDialogParameters      | 読込元となるファイルパスの指定 |
 | FolderBrowserDialogParameters | フォルダーパスの指定           |
 | PrintDialogParameters         | フロードキュメントの印刷       |
 
-これらを使い ViewModel を起点に OpenFileDialog を表示する場合は以下のようになります。  
+- ダイアログを表示する
 
-```cs
-using MyBase.Wpf;
+  これらを使い ViewModel を起点に OpenFileDialog を表示する場合は以下のようになります。
 
-public class MainWindowViewModel : ViewModelBase
-{
-    /// <summary>
-    /// ファイルを選択するダイアログを表示します。
-    /// </summary>
-    public void ShowOpenFileDialog()
-    {
-        var parameters = new OpenFileDialogParameters()
-            {
-                InitialDirectory = root,
-                Filter = "すべてのファイル|*.*|テキストファイル|*.txt",
-                DefaultExtension = ".txt",
-                Multiselect = true,
-            };
-        var result = this.CommonDialogService.ShowDialog(parameters);
-        if (!result)
-            return;
-        var fileName = parameters.FileName;
-    }
-}
-```
+  ```cs
+  using MyBase.Wpf;
 
-単純な表示だけなく、ダイアログを表示する前、閉じられた後に呼び出されるコールバックメソッドを引数で指定することもできます。以下は、OpenFileDialog に文字コードの選択欄を追加し、ユーザによって選択された文字コードを取得する例です。ダイアログの装飾には Windows API CodePack を使用しています。  
+  public class MainWindowViewModel : ViewModelBase
+  {
+      /// <summary>
+      /// ファイルを選択するダイアログを表示します。
+      /// </summary>
+      public void ShowOpenFileDialog()
+      {
+          var parameters = new OpenFileDialogParameters()
+              {
+                  InitialDirectory = root,
+                  Filter = "すべてのファイル|*.*|テキストファイル|*.txt",
+                  DefaultExtension = ".txt",
+                  Multiselect = true,
+              };
+          var result = this.CommonDialogService.ShowDialog(parameters);
+          if (!result)
+              return;
+          var fileName = parameters.FileName;
+      }
+  }
+  ```
 
-```cs
-using Microsoft.WindowsAPICodePack.Dialogs;
-using Microsoft.WindowsAPICodePack.Dialogs.Controls;
-using MyBase.Wpf;
-using System.Linq;
-using System.Text;
+- コールバックメソッドを指定する
 
-public class MainWindowViewModel : ViewModelBase
-{
-    /// <summary>
-    /// ファイルを選択するダイアログを表示します。
-    /// </summary>
-    public void ShowOpenFileDialog()
-    {
-        IEnumerable<string> fileNames = null;
-        string filter = null;
-        Encoding encoding = null;
-        this.CommonDialogService.ShowDialog(
-            new OpenFileDialogParameters()
-            {
-                InitialDirectory = root,
-                Filter = "すべてのファイル|*.*|テキストファイル|*.txt",
-                DefaultExtension = ".txt",
-                Multiselect = true,
-            },
+  単純な表示だけなく、ダイアログを表示する前、閉じられた後に呼び出されるコールバックメソッドを引数で指定することもできます。以下は、OpenFileDialog に文字コードの選択欄を追加し、ユーザによって選択された文字コードを取得する例です。ダイアログの装飾には Windows API CodePack を使用しています。
 
-            // ダイアログを表示する前に呼び出されるコールバックメソッド
-            (dialog, parameters) =>
-            {
-                // 文字コードの選択欄を追加する
-                var d = (CommonFileDialog)dialog;
-                var encodingComboBox = this.CreateEncodingComboBox(Encoding.UTF8);
-                var encodingGroupBox = new CommonFileDialogGroupBox($"文字コード(&E):");
-                encodingGroupBox.Items.Add(encodingComboBox);
-                d.Controls.Add(encodingGroupBox);
-            },
+  ```cs
+  using Microsoft.WindowsAPICodePack.Dialogs;
+  using Microsoft.WindowsAPICodePack.Dialogs.Controls;
+  using MyBase.Wpf;
+  using System.Linq;
+  using System.Text;
 
-            // ダイアログが閉じられた後に呼び出されるコールバックメソッド
-            (dialog, parameters, result) =>
-            {
-                if (result == false)
-                    return;
+  public class MainWindowViewModel : ViewModelBase
+  {
+      /// <summary>
+      /// ファイルを選択するダイアログを表示します。
+      /// </summary>
+      public void ShowOpenFileDialog()
+      {
+          IEnumerable<string> fileNames = null;
+          string filter = null;
+          Encoding encoding = null;
+          this.CommonDialogService.ShowDialog(
+              new OpenFileDialogParameters()
+              {
+                  InitialDirectory = root,
+                  Filter = "すべてのファイル|*.*|テキストファイル|*.txt",
+                  DefaultExtension = ".txt",
+                  Multiselect = true,
+              },
 
-                var d = (CommonFileDialog)dialog;
-                var p = (OpenFileDialogParameters)parameters;
-                fileNames = p.FileNames;
-                filter = p.FilterName;
+              // ダイアログを表示する前に呼び出されるコールバックメソッド
+              (dialog, parameters) =>
+              {
+                  // 文字コードの選択欄を追加する
+                  var d = (CommonFileDialog)dialog;
+                  var encodingComboBox = this.CreateEncodingComboBox(Encoding.  UTF8);
+                  var encodingGroupBox = new CommonFileDialogGroupBox($"文字コード  (&E):");
+                  encodingGroupBox.Items.Add(encodingComboBox);
+                  d.Controls.Add(encodingGroupBox);
+              },
 
-                // 選択された文字コードを取得する
-                var encodingGroupBox = (CommonFileDialogGroupBox)d.Controls.First();
-                var encodingComboBox = (CommonFileDialogComboBox)encodingGroupBox.Items.First();
-                encoding = ((EncodingComboBoxItem)encodingComboBox.Items[encodingComboBox.SelectedIndex]).Encoding;
-            });
+              // ダイアログが閉じられた後に呼び出されるコールバックメソッド
+              (dialog, parameters, result) =>
+              {
+                  if (result == false)
+                      return;
 
-        var result = this.CommonDialogService.ShowDialog(parameters);
-        if (!result)
-            return;
-    }
+                  var d = (CommonFileDialog)dialog;
+                  var p = (OpenFileDialogParameters)parameters;
+                  fileNames = p.FileNames;
+                  filter = p.FilterName;
 
-    /// <summary>
-    /// 文字コード選択用のコンボボックスを構築します。
-    /// </summary>
-    /// <param name="defaultEncoding">既定の文字コード</param>
-    /// <returns>文字コード選択用のコンボボックス</returns>
-    public static CommonFileDialogComboBox CreateEncodingComboBox(Encoding defaultEncoding)
-    {
-        var comboBox = new CommonFileDialogComboBox();
-        var encodings = Constants.ENCODINGS;
-        for (var i = 0; i < encodings.Count(); i++)
-        {
-            comboBox.Items.Add(new EncodingComboBoxItem(encodings.ElementAt(i)));
-            if (encodings.ElementAt(i) == defaultEncoding)
-                comboBox.SelectedIndex = i;
-        }
-        return comboBox;
-    }
+                  // 選択された文字コードを取得する
+                  var encodingGroupBox = (CommonFileDialogGroupBox)d.Controls.  First();
+                  var encodingComboBox = (CommonFileDialogComboBox)  encodingGroupBox.Items.First();
+                  encoding = ((EncodingComboBoxItem)encodingComboBox.Items  [encodingComboBox.SelectedIndex]).Encoding;
+              });
 
-    /// <summary>
-    /// 文字コードを格納するコンボボックスアイテムを表します。
-    /// </summary>
-    private class EncodingComboBoxItem : CommonFileDialogComboBoxItem
-    {
-        public Encoding Encoding { get; }
+          var result = this.CommonDialogService.ShowDialog(parameters);
+          if (!result)
+              return;
+      }
 
-        public EncodingComboBoxItem(Encoding encoding)
-            : this(encoding, encoding?.EncodingName)
-        {
-        }
+      /// <summary>
+      /// 文字コード選択用のコンボボックスを構築します。
+      /// </summary>
+      /// <param name="defaultEncoding">既定の文字コード</param>
+      /// <returns>文字コード選択用のコンボボックス</returns>
+      public static CommonFileDialogComboBox CreateEncodingComboBox(Encoding   defaultEncoding)
+      {
+          var comboBox = new CommonFileDialogComboBox();
+          var encodings = Constants.ENCODINGS;
+          for (var i = 0; i < encodings.Count(); i++)
+          {
+              comboBox.Items.Add(new EncodingComboBoxItem(encodings.ElementAt(i))  );
+              if (encodings.ElementAt(i) == defaultEncoding)
+                  comboBox.SelectedIndex = i;
+          }
+          return comboBox;
+      }
 
-        public EncodingComboBoxItem(Encoding encoding, string text)
-            : base(text)
-        {
-            this.Encoding = encoding;
-        }
-    }
-}
-```
+      /// <summary>
+      /// 文字コードを格納するコンボボックスアイテムを表します。
+      /// </summary>
+      private class EncodingComboBoxItem : CommonFileDialogComboBoxItem
+      {
+          public Encoding Encoding { get; }
+
+          public EncodingComboBoxItem(Encoding encoding)
+              : this(encoding, encoding?.EncodingName)
+          {
+          }
+
+          public EncodingComboBoxItem(Encoding encoding, string text)
+              : base(text)
+          {
+              this.Encoding = encoding;
+          }
+      }
+  }
+  ```
+
+### InteractionRequest - インタラクションリクエスト
+
+IDialogService の追加に伴い Prism 8.0 で廃止された InteractionRequest の一連の処理が、本ライブラリに移植されています。  
+この InteractionRequest を用いて WPF 標準の MessageBox を使用したメッセージ表示する MessageAction を用意しました。MessageBox の引数を Xaml から指定することができます。
+
+- View でメッセージを指定する場合
+
+  ```cs
+  using MyBase.Wpf.InteractionRequest;
+
+      // 中略
+
+      public InteractionRequest<Confirmation> MessageRequest { get; } = new   InteractionRequest<Confirmation>();
+
+      // 中略
+
+      this.MessageRequest.Raise(new Confirmation(), c =>
+      {
+          if (c.Confirmed == true)
+              // OK が選択されたときに実行する処理
+      });
+  ```
+
+  ```xml
+  <Window x:Class="TestApp.Views.MainWindow"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+          xmlns:mb="clr-namespace:MyBase.Wpf.InteractionRequest;assembly=MyBase">
+
+      <i:Interaction.Triggers>
+          <mb:InteractionRequestTrigger SourceObject="{Binding MessageRequest, Mode=OneWay}">
+              <mb:MessageAction
+                  Title="タイトル"
+                  Message="メッセージ"
+                  Buttons="YesNo"
+                  Image="Question"
+                  DefaultResult="No"
+                  Options="RightAlign"/>
+          </mb:InteractionRequestTrigger>
+      </i:Interaction.Triggers>
+
+      <!-- 省略 -->
+
+  </Window>
+  ```
+
+- ViewModel でメッセージを指定する場合
+
+  ```cs
+  using MyBase.Wpf.InteractionRequest;
+      // 中略
+      public InteractionRequest<Confirmation> MessageRequest { get; } = new InteractionRequest<Confirmation>();
+      // 中略
+      this.MessageRequest.Raise(new Confirmation() { Title = "タイトル", Content = "メッセージ" }, c =>
+      {
+          if (c.Confirmed == true)
+              return;
+      });
+  ```
+
+  ```xml
+  <Window x:Class="TestApp.Views.MainWindow"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+          xmlns:mb="clr-namespace:MyBase.Wpf.InteractionRequest;assembly=MyBase">
+      <i:Interaction.Triggers>
+          <mb:InteractionRequestTrigger SourceObject="{Binding MessageRequest, Mode=OneWay}">
+              <mb:MessageAction
+                  Buttons="YesNo"
+                  Image="Question"
+                  DefaultResult="No"
+                  Options="RightAlign"/>
+          </mb:InteractionRequestTrigger>
+      </i:Interaction.Triggers>
+      <!-- 省略 -->
+  </Window>
+  ```
