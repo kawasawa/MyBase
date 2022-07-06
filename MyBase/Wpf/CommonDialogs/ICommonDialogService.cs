@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Prism.Services.Dialogs;
+using System;
 
 namespace MyBase.Wpf.CommonDialogs
 {
     /// <summary>
     /// コモンダイアログを表示するためのインターフェースを表します。
     /// </summary>
-    public interface ICommonDialogService
+    public interface ICommonDialogService : IDialogService
     {
         /// <summary>
         /// ダイアログを表示します。

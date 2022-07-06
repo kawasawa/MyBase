@@ -18,22 +18,19 @@ Prism との連携を意識した処理や標準機能を拡張する処理の�
 
 ### ProductInfo - プロダクト情報
 
-ProductInfo クラスを利用することでエントリーポイントとなる実行ファイルのプロダクト情報を取得することができます。このクラスは IProductInfo インターフェースを実装しており、他のサービスと同様にシングルトンとして DI コンテナに登録しておくと良いでしょう。
+ProductInfo クラスを利用することでエントリーポイントとなる実行ファイルのプロダクト情報を取得できます。このクラスは IProductInfo インターフェースを実装しており、他のサービスと同様にシングルトンとして DI コンテナに登録しておくと良いでしょう。
 
 ```cs
 using MyBase;
 using Prism.Ioc;
 using Prism.Unity;
 
-namespace TestApp
+public partial class App : PrismApplication
 {
-    public partial class App : PrismApplication
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
-        protected override void RegisterTypes(IContainerRegistry containerRegistry)
-        {
-            // シングルトンの登録
-            containerRegistry.RegisterSingleton<IProductInfo, ProductInfo>();
-        }
+        // シングルトンの登録
+        containerRegistry.RegisterSingleton<IProductInfo, ProductInfo>();
     }
 }
 ```
@@ -44,14 +41,11 @@ ViewModel 層では DI フレームワークからインスタンスを注入し
 using MyBase;
 using Unity;
 
-namespace TestApp.ViewModels
+public class MainWindowViewModel : ViewModelBase
 {
-    public class MainWindowViewModel : ViewModelBase
-    {
-        // インスタンスが注入されるプロパティ
-        [Dependency]
-        public IProductInfo ProductInfo { get; set; }
-    }
+    // インスタンスが注入されるプロパティ
+    [Dependency]
+    public IProductInfo ProductInfo { get; set; }
 }
 ```
 
@@ -74,54 +68,48 @@ ProductInfo クラスは内部で遅延初期化される Assembly を保持し�
 
 ### ValidatableBase - 変更通知オブジェクト
 
-Prism が提供する変更通知処理が搭載された BindableBase クラスを継承し、IDisposable, INotifyDataErrorInfo を実装した ValidatableBase があります。このクラスから派生し Model 層、ViewModel 層を実装することができます。
+Prism が提供する変更通知処理が搭載された BindableBase クラスを継承し、IDisposable, INotifyDataErrorInfo を実装した ValidatableBase があります。このクラスから派生し Model 層、ViewModel 層を実装できます。
 
 ```cs
 using MyBase;
 
-namespace TestApp.ViewModels
+public abstract class ViewModelBase : ValidatableBase
 {
-    public abstract class ViewModelBase : ValidatableBase
-    {
-    }
+}
 
-    public class MainWindowViewModel : ViewModelBase
-    {
-        private string _text;
+public class MainWindowViewModel : ViewModelBase
+{
+    private string _text;
 
-        // 変更通知プロパティ
-        public string Text
-        {
-            get => this._text;
-            set => this.SetProperty(ref this._text, value);
-        }
+    // 変更通知プロパティ
+    public string Text
+    {
+        get => this._text;
+        set => this.SetProperty(ref this._text, value);
     }
 }
 ```
 
-ValidatableBase は、同じく Prism の ErrorsContainer を内包しており、妥当性検証が必要なオブジェクトの基底クラスとして利用できます。例えば以下のように、コンストラクタで ValidateProperties メソッドを呼び出すことで、インスタンスの生成と同時にプロパティの検証を行い、エラー情報を付与することができます。
+ValidatableBase は、同じく Prism の ErrorsContainer を内包しており、妥当性検証が必要なオブジェクトの基底クラスとして利用できます。たとえば以下のように、コンストラクタで ValidateProperties メソッドを呼び出すことで、インスタンスの生成と同時にプロパティの検証を行い、エラー情報を付与できます。
 
 ```cs
 using System.ComponentModel.DataAnnotations;
 
-namespace TestApp.ViewModels
+public class MainWindowViewModel : ViewModelBase
 {
-    public class MainWindowViewModel : ViewModelBase
+    private string _text;
+
+    // 検証属性が付与されたプロパティ
+    [Required]
+    public string Text
     {
-        private string _text;
+        get => this._text;
+        set => this.SetProperty(ref this._text, value);
+    }
 
-        // 検証属性が付与されたプロパティ
-        [Required]
-        public string Text
-        {
-            get => this._text;
-            set => this.SetProperty(ref this._text, value);
-        }
-
-        public MainWindowViewModel()
-        {
-            this.ValidateProperties();
-        }
+    public MainWindowViewModel()
+    {
+        this.ValidateProperties();
     }
 }
 ```
@@ -132,18 +120,15 @@ namespace TestApp.ViewModels
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 
-namespace TestApp.ViewModels
+public class MainWindowViewModel : ViewModelBase
 {
-    public class MainWindowViewModel : ViewModelBase
-    {
-        // ReactiveProperty の宣言
-        public ReactiveProperty<bool> IsWorking { get; }
+    // ReactiveProperty の宣言
+    public ReactiveProperty<bool> IsWorking { get; }
 
-        public MainWindowViewModel()
-        {
-            // ReactiveProperty の初期化と CompositeDisposable の紐づけ
-            this.IsWorking = new ReactiveProperty<bool>().AddTo(this.CompositeDisposable);
-        }
+    public MainWindowViewModel()
+    {
+        // ReactiveProperty の初期化と CompositeDisposable の紐づけ
+        this.IsWorking = new ReactiveProperty<bool>().AddTo(this.CompositeDisposable);
     }
 }
 ```
@@ -172,15 +157,12 @@ using MyBase;
 using Prism.Ioc;
 using Prism.Unity;
 
-namespace TestApp
+public partial class App : PrismApplication
 {
-    public partial class App : PrismApplication
+    protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
-        protected override void RegisterTypes(IContainerRegistry containerRegistry)
-        {
-            // インスタンスの登録
-            containerRegistry.RegisterInstance(new CompositeLogger(new DebugLogger(), new TraceLogger()));
-        }
+        // インスタンスの登録
+        containerRegistry.RegisterInstance(new CompositeLogger(new DebugLogger(), new TraceLogger()));
     }
 }
 ```
@@ -188,7 +170,7 @@ namespace TestApp
 ### CommonDialogService - コモンダイアログの表示
 
 以前の Prism では InteractionRequest とそれに対応する Trigger による相互作用でダイアログを表示する方法が一般的でした。これが Prism 7.2 以降のバージョンでは新たに IDialogService インターフェースが追加され、こちらを使用する方法が推奨されるようになりました。  
-この方式を踏襲し、本ライブラリではコモンダイアログの表示に特化した ICommonDialogService を提供しています。処理で授受される ICommonDialogParameters インターフェースを実装したいくつかのクラスが定義されています。現状では以下の機能が実装されています。
+この方式を踏襲し、本ライブラリではコモンダイアログの表示に特化した ICommonDialogService、およびその実装である CommonDialogService を提供しています。CommonDialogService は Prism の DialogService を継承しているため、これに置き換えて使用することもできます。処理で授受される ICommonDialogParameters インターフェースを実装したいくつかのクラスが定義されており、現状では以下の機能が用意されています。
 
 | パラメータ                    | 主な機能                       |
 | ----------------------------- | ------------------------------ |
@@ -203,9 +185,13 @@ namespace TestApp
 
   ```cs
   using MyBase.Wpf;
+  using Unity;
 
   public class MainWindowViewModel : ViewModelBase
   {
+      [Dependency]
+      public ICommonDialogService CommonDialogService { get; set; }
+
       /// <summary>
       /// ファイルを選択するダイアログを表示します。
       /// </summary>
@@ -236,9 +222,13 @@ namespace TestApp
   using MyBase.Wpf;
   using System.Linq;
   using System.Text;
+  using Unity;
 
   public class MainWindowViewModel : ViewModelBase
   {
+      [Dependency]
+      public ICommonDialogService CommonDialogService { get; set; }
+
       /// <summary>
       /// ファイルを選択するダイアログを表示します。
       /// </summary>
@@ -331,7 +321,7 @@ namespace TestApp
 ### InteractionRequest - インタラクションリクエスト
 
 IDialogService の追加に伴い Prism 8.0 で廃止された InteractionRequest の一連の処理が、本ライブラリに移植されています。  
-この InteractionRequest を用いて WPF 標準の MessageBox を使用したメッセージ表示する MessageAction を用意しました。MessageBox の引数を Xaml から指定することができます。
+この InteractionRequest を用いて WPF 標準の MessageBox を使用したメッセージ表示する MessageAction を用意しました。MessageBox の引数を Xaml から指定できます。
 
 - View でメッセージを指定する場合
 

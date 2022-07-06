@@ -1,4 +1,6 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Prism.Ioc;
+using Prism.Services.Dialogs;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -11,10 +13,16 @@ namespace MyBase.Wpf.CommonDialogs
     /// <summary>
     /// コモンダイアログを表示するためのサービスを表します。
     /// </summary>
-    public class CommonDialogService : ICommonDialogService
+    public class CommonDialogService : DialogService, ICommonDialogService
     {
         private static Window GetActiveWindow()
             => Application.Current.Windows.OfType<Window>().FirstOrDefault(x => x.IsActive);
+
+        /// <summary>
+        /// このクラスの新しいインスタンスを生成します。
+        /// </summary>
+        /// <param name="containerExtension">DI コンテナ</param>
+        public CommonDialogService(IContainerExtension containerExtension) : base(containerExtension) { }
 
         /// <summary>
         /// ダイアログを表示します。
