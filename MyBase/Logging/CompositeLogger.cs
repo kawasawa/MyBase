@@ -134,9 +134,9 @@ namespace MyBase.Logging
                 this._loggers[i] = null;
                 if (SHRINK_THRESHOLD < this._loggers.Capacity && this.Count < this._loggers.Capacity / 2)
                 {
-                    var remp = new List<ILoggerFacade>(this._loggers.Capacity / 2);
-                    remp.AddRange(this._loggers);
-                    this._loggers = remp;
+                    var buffer = new List<ILoggerFacade>(this._loggers.Capacity / 2);
+                    buffer.AddRange(this._loggers);
+                    this._loggers = buffer;
                 }
                 Volatile.Write(ref this._count, this._count - 1);
                 return true;

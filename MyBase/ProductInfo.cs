@@ -19,7 +19,7 @@ namespace MyBase
         private readonly Lazy<string> _lazyDescription;
         private readonly Lazy<string> _lazyCompany;
         private readonly Lazy<string> _lazyProduct;
-        private readonly Lazy<string> _lazyCopyritht;
+        private readonly Lazy<string> _lazyCopyright;
         private readonly Lazy<string> _lazyTrademark;
         private readonly Lazy<bool> _lazyIsDebugBuild;
 
@@ -62,7 +62,7 @@ namespace MyBase
         /// <summary>
         /// 著作権表示を取得します。
         /// </summary>
-        public string Copyright => this._lazyCopyritht.Value;
+        public string Copyright => this._lazyCopyright.Value;
 
         /// <summary>
         /// 商標表示を取得します。
@@ -116,7 +116,7 @@ namespace MyBase
             this._lazyDescription = new Lazy<string>(() => ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(this.Assembly, typeof(AssemblyDescriptionAttribute)))?.Description);
             this._lazyCompany = new Lazy<string>(() => ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(this.Assembly, typeof(AssemblyCompanyAttribute)))?.Company);
             this._lazyProduct = new Lazy<string>(() => ((AssemblyProductAttribute)Attribute.GetCustomAttribute(this.Assembly, typeof(AssemblyProductAttribute)))?.Product);
-            this._lazyCopyritht = new Lazy<string>(() => ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(this.Assembly, typeof(AssemblyCopyrightAttribute)))?.Copyright);
+            this._lazyCopyright = new Lazy<string>(() => ((AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(this.Assembly, typeof(AssemblyCopyrightAttribute)))?.Copyright);
             this._lazyTrademark = new Lazy<string>(() => ((AssemblyTrademarkAttribute)Attribute.GetCustomAttribute(this.Assembly, typeof(AssemblyTrademarkAttribute)))?.Trademark);
             this._lazyIsDebugBuild = new Lazy<bool>(() => (Attribute.GetCustomAttribute(this.Assembly, typeof(DebuggableAttribute)) as DebuggableAttribute)?.IsJITTrackingEnabled ?? false);
         }
